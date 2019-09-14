@@ -1,7 +1,13 @@
+import java.util.ArrayList;
+
 public class Main {
 
     public static void main(String[] args) {
-        String aux = "Gabriel";
-        System.out.println("Hello World " + aux + "\n\n SUA BIXA");
+
+        ArrayList<String> strs = Parser.readFile();
+        ArrayList<Game> games = new ArrayList<Game>();
+        strs = Parser.excludeTime(strs);
+
+        games = Parser.coreMethod(strs);
     }
 }
