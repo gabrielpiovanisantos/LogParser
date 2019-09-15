@@ -12,8 +12,7 @@ import java.util.regex.Pattern;
 public class Parser {
 
     //ler o arquivo e retorna um conjunto contendo as suas linhas
-    public static ArrayList<String> readFile()
-    {
+    public static ArrayList<String> readFile() {
         BufferedReader br;
         ArrayList<String> strs = new ArrayList<>();
 
@@ -34,15 +33,13 @@ public class Parser {
     }
 
     //exclui horario das linhas
-    public static ArrayList<String> excludeTime(ArrayList<String> strs)
-    {
+    public static ArrayList<String> excludeTime(ArrayList<String> strs) {
         ArrayList<String> retStrs = new ArrayList<>();
 
         String horario = "\\d{1,3}:\\d{2}";
         String replace = "";
         Pattern p = Pattern.compile(horario);
-        for(String str :  strs)
-        {
+        for (String str : strs) {
             Matcher m = p.matcher(str);
             retStrs.add(m.replaceAll(replace));
         }
@@ -60,32 +57,44 @@ public class Parser {
 //        }
 //    }
 
-    public static ArrayList<Game> coreMethod(ArrayList<String> strs)
-    {
+    //metodo principal
+    public static ArrayList<Game> coreMethod(ArrayList<String> strs) {
         ArrayList<Game> games = new ArrayList<>();
-        for (String str : strs)
-        {
-            String[] words = str.trim().split(" ");
-//            System.out.println(Arrays.toString(words));
-            switch (words[0])
-            {
-                case "InitGame:":
+        for (String str : strs) {
+            String[] words = str.trim().split(" ", 2);
+            switch (words[0]) {
+                case "InitGame:":// instancia um novo jogo
                     games.add(new Game(games.size()));
                     break;
-                case "Death":
-//                    if ("1022".equals(words[1])) {
-//
-//                    }
-//                    games.get(games.size()-1).setDeaths();
+                case "Death:":
+                    String[] evento = words[1].trim().split(" ");
+                    Integer causa = Integer.parseInt(evento[2].replace(":", ""));// a causa da morte
+                    // se essa causa ja aconteceu, incrementa a contagem, se não, insere
+                    if (games.get(games.size() - 1).getDeaths().containsKey(Mean.getById(causa))) {
+                        games.get(games.size() - 1).getDeaths().put(Mean.getById(causa),
+                                games.get(games.size() - 1).getDeaths().get(Mean.getById(causa)) + 1);
+                    } else {
+                        games.get(games.size() - 1).getDeaths().put(Mean.getById(causa), 1);
+                    }
                     break;
                 case "ClientConnect:":
                     Player player = new Player(games.size());
-                    games.get(games.size()-1).getPlayers().add(player);
+                    games.get(games.size() - 1).getPlayers().add(player);
+
                     break;
                 case "ClientUserinfoChanged:":
-                    String nome = getName(words[2]);
-                    games.get(games.size()-1).getPlayers().get(Integer.parseInt(words[1])).setName(nome);
+                    evento = words[1].trim().split(" ", 2);
+                    String nome = getName(evento[1]);
+                    int playerAtual = Integer.parseInt(evento[0]) - 1;
+                    if (games.get(games.size() - 1).getPlayers().size() > playerAtual)
+                        games.get(games.size() - 1).getPlayers().get(playerAtual).setName(nome);
                     break;
+                case "score:":
+                    evento = words[1].trim().split(" ");
+                    playerAtual = Integer.parseInt(evento[6]) - 1;
+                    Integer killsAtual = Integer.parseInt(evento[0]);
+                    games.get(games.size()-1).getPlayers().get(playerAtual).setKills(killsAtual);
+                    games.get(games.size()-1).playersToString();
                 default:
                     break;
             }

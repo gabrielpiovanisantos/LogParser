@@ -9,5 +9,7 @@ public class Main {
         strs = Parser.excludeTime(strs);
 
         games = Parser.coreMethod(strs);
+
+//        System.out.println(Mean.getById(22));
     }
 }
