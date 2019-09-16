@@ -4,4 +4,4 @@ sendo o nome de cada jogador, a quantidade de morte de cada jogador, a quantidad
 mortes no jogo contabilizado a partir da soma das mortes por cada tipo de morte.
 
 
-Para executar apenas execute a classe main.java do diretório src 
+Para executar apenas execute a classe main.java do diretório src com o Java que você tem instalado em sua máquina
